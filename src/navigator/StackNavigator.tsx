@@ -5,6 +5,9 @@ import { auth } from '../configs/firebaseConfig';
 import { onAuthStateChanged } from '@firebase/auth';
 import { HomeScreen } from '../screens/HomeScreen';
 import { RegisterScreens } from '../screens/RegisterScreens';
+import { View } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
+import { styles } from '../theme/styles';
 
 
 const Stack = createStackNavigator();
@@ -48,18 +51,25 @@ export const StackNavigator=()=> {
   }, []);
   
   return (
-    <Stack.Navigator>
-      {
-        !isAuth?
-        routesNoAuth.map((item,index)=>(
-          <Stack.Screen key={index} name={item.name} options={{headerShown:false}} component={item.screen} />
-        ))
-        :
-        routesAuth.map((item,index)=>(
-          <Stack.Screen key={index} name={item.name} options={{headerShown:false}} component={item.screen} />
-        ))
-      }
-      {/* <Stack.Screen name="Register" options={{headerShown:false}} component={RegisterScreen} /> */}
-    </Stack.Navigator>
+    <>
+      {isLoading?(
+        <View style={styles.root}>
+          <ActivityIndicator size={45} />
+        </View>
+        ) :(
+          <Stack.Navigator>
+            {
+              !isAuth?
+                routesNoAuth.map((item,index)=>(
+                <Stack.Screen key={index} name={item.name} options={{headerShown:false}} component={item.screen} />
+                ))
+                :
+                routesAuth.map((item,index)=>(
+                <Stack.Screen key={index} name={item.name} options={{headerShown:false}} component={item.screen} />
+                ))
+            }
+          </Stack.Navigator>
+        )}
+  </>
   );
 }

@@ -5,7 +5,7 @@ import { styles } from '../theme/styles';
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import { auth } from '../configs/firebaseConfig';
 import { CommonActions, useNavigation } from '@react-navigation/native';
-//import { CommonActions, useNavigation } from '@react-navigation/native';
+
 
 
 //interface iniciar sesion
@@ -60,7 +60,7 @@ export const LoginScreen = () => {
             const response =await signInWithEmailAndPassword(
                 auth,
                 formLogin.email,
-                formLogin.password
+                formLogin.password,
             );
             //console.log(response);
         } catch (ex) {
@@ -90,8 +90,7 @@ export const LoginScreen = () => {
                 right={<TextInput.Icon icon="eye" onPress={()=> setHiddenPassword(!hiddenPassword)}/>}
                 style={styles.inputs}
                 onChangeText={(value)=>handlerSetValues('password',value)}
-            
-    />
+                />
     <Button style={styles.button} mode="contained" onPress={handlerFormLogin}>Iniciar</Button> 
     <Text 
         style={styles.textRedirect}
