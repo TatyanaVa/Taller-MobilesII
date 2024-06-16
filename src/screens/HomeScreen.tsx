@@ -4,6 +4,7 @@ import { Avatar, Button, Divider, FAB, IconButton, Modal, Portal, Text, TextInpu
 import { auth } from '../configs/firebaseConfig';
 import { FlatList, View } from 'react-native';
 import { styles } from '../theme/styles';
+import { StatusBar } from 'expo-status-bar';
 
 
 interface formUser{
@@ -50,6 +51,7 @@ const handlerUpdateUser = async()=>{
   return (
     <>
     <View style={styles.rootHome}>
+    <StatusBar style='light'/>
       <View style={styles.header}>
       <Avatar.Text size={55} label='MI'/> 
       <View>

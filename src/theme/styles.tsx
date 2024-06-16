@@ -56,5 +56,48 @@ export const styles=StyleSheet.create({
         position:'absolute',
         bottom:20,
         right:15
-    }
+    },
+    container:{
+        flex:1,
+        backgroundColor:'#0F172a',
+        alignItems:'center',
+        justifyContent:'center'
+    },
+    title:{
+        fontSize:32,
+        color:'white',
+        fontWeight:'900'
+    },
+    cardUp: {
+        width:100,
+        height:100,
+        margin:10,
+        borderWidth:10,
+        borderColor:"#334155",
+        backgroundColor:"#1e293b",
+        justifyContent:'center',
+        alignItems:'center',
+        borderRadius:25
+      },
+      textCard:{
+        fontSize:46,
+        color:"#ffff",
+        
+      },
+      cardDown: {
+        width:100,
+        height:100,
+        margin:10,
+        borderWidth:10,
+        borderColor:"#334155",
+        backgroundColor:"#1e293b",
+        justifyContent:'center',
+        alignItems:'center',
+        borderRadius:25
+      },
+      board:{
+        flexDirection:"row",
+        flexWrap:"wrap",
+        justifyContent:"center"
+      }
 })
