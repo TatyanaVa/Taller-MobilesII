@@ -99,5 +99,16 @@ export const styles=StyleSheet.create({
         flexDirection:"row",
         flexWrap:"wrap",
         justifyContent:"center"
-      }
+      },
+      modalContainer: {
+        backgroundColor: 'white',
+        padding: 20,
+        margin: 20,
+        borderRadius: 10,
+      },
+      modalText: {
+        fontSize: 20,
+        marginBottom: 20,
+        textAlign: 'center',
+      },
 })

@@ -5,6 +5,8 @@ import { auth } from '../configs/firebaseConfig';
 import { FlatList, View } from 'react-native';
 import { styles } from '../theme/styles';
 import { StatusBar } from 'expo-status-bar';
+import { CommonActions, useNavigation } from '@react-navigation/native';
+import { Auth } from '@firebase/auth/dist/index.shared';
 
 
 interface formUser{
@@ -34,6 +36,7 @@ export const HomeScreen = () => {
   //hook useState:capturar la data del usuario logeado
   const [userAuth, setUserAuth] = useState<firebase.User | null>(null);
 
+  const navigation = useNavigation();
 
   //Funcion para cambiar los datos del formulario
   const handlerSetValues =(key:string,value:string)=>{
@@ -46,7 +49,15 @@ const handlerUpdateUser = async()=>{
     displayPhone:formUser.phone,
   });
   setShowModalProfile(false);
-}
+};
+const handlerSignOut = async () => {
+  try {
+    await signOut(auth);
+    navigation.dispatch(CommonActions.navigate({ name: 'LoginScreen' }));
+  } catch (ex) {
+    console.log(ex);
+  }
+};
 
   return (
     <>
@@ -110,4 +121,8 @@ const handlerUpdateUser = async()=>{
   )
 }
 
+
+function signOut(auth: Auth) {
+  throw new Error('Function not implemented.');
+}
 

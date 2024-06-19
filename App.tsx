@@ -7,6 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { StackNavigator } from './src/navigator/StackNavigator';
 import { Game } from './src/screens/Game';
 
+
 const App = () => {
   return (
     <NavigationContainer>
