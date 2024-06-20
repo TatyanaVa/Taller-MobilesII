@@ -53,7 +53,6 @@ export const RegisterScreens = () => {
             });
             return
         }
-       // console.log(formRegister);
        try {
             const response=await createUserWithEmailAndPassword(
                 auth,

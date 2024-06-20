@@ -12,10 +12,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <PaperProvider>
-        <Game/>
-        {/* <StackNavigator/> */}
-        {/* <LoginScreen/> */}
-        {/* <RegisterScreens/> */}
+        <StackNavigator/>
       </PaperProvider>
     </NavigationContainer>
   )

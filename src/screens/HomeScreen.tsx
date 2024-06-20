@@ -1,128 +1,146 @@
-import firebase, { updateProfile } from '@firebase/auth';
-import React, { useEffect, useState } from 'react'
+import firebase, { updateProfile,signOut } from '@firebase/auth';
+import React, { useEffect, useState } from 'react';
 import { Avatar, Button, Divider, FAB, IconButton, Modal, Portal, Text, TextInput } from 'react-native-paper';
-import { auth } from '../configs/firebaseConfig';
+import { auth, dbRealTime, } from '../configs/firebaseConfig';
 import { FlatList, View } from 'react-native';
 import { styles } from '../theme/styles';
 import { StatusBar } from 'expo-status-bar';
 import { CommonActions, useNavigation } from '@react-navigation/native';
-import { Auth } from '@firebase/auth/dist/index.shared';
+import { onValue, ref } from 'firebase/database';
 
 
-interface formUser{
-  name:string;
-  phone:string;
+
+interface FormUser {
+  name: string;
+}
+export interface Score{
+  score:number,
+  name:string
 }
 
 export const HomeScreen = () => {
-  //hooknuseState:manipular el formulario del perfil de usuario
-  const [formUser, setFormUser] = useState<formUser>({
-    name:'',
-    phone:'',
+
+  const [formUser, setFormUser] = useState<FormUser>({
+    name: '',
   });
 
-  useEffect(()=>{
-    //obtener la data del usuario authenticado
-    setUserAuth(auth.currentUser);
-    setFormUser({
-      name:auth.currentUser?.displayName??"",
-      phone:auth.currentUser?.displayPhone??""});
-  
-},[]);
-
-  //hook usestate:mostrata u ocultar
-  const [showModalProfile, setShowModalProfile] = useState<boolean>(false)
-
-  //hook useState:capturar la data del usuario logeado
+  const [showModalProfile, setShowModalProfile] = useState<boolean>(false);
   const [userAuth, setUserAuth] = useState<firebase.User | null>(null);
-
+  const [scores, setScores]=useState<Score[]>([]);
   const navigation = useNavigation();
 
-  //Funcion para cambiar los datos del formulario
-  const handlerSetValues =(key:string,value:string)=>{
-    setFormUser({...formUser, [key]:value})
-  };
-//funcion actualizar la data del usuario el modal
-const handlerUpdateUser = async()=>{
-  await updateProfile(userAuth!,{
-    displayName:formUser.name,
-    displayPhone:formUser.phone,
-  });
-  setShowModalProfile(false);
-};
-const handlerSignOut = async () => {
-  try {
-    await signOut(auth);
-    navigation.dispatch(CommonActions.navigate({ name: 'LoginScreen' }));
-  } catch (ex) {
-    console.log(ex);
+  //data 
+  const getAllScores=()=>{
+    const dbRef=ref(dbRealTime, "scores");
+    onValue(dbRef,(snapshot)=>{
+      const data=snapshot.val();
+      //const getScores=Object.keys(data);
+      const listScores:Score[]=[];
+      for (let key in data) {
+        listScores.push(data[key]);
+      }
+      //getScores.forEach((key)=>{
+        //const value={...data[key],scor:key};
+        //listScores.push(value);
+     // });
+      setScores(listScores);
+    })
   }
-};
+  const [showModalGame, setShowModalGame]=useState<boolean>(false);
+  //const handleStartGame = () => { navigation.navigate('Game'); };
+
+  useEffect(() => {
+    setUserAuth(auth.currentUser);
+    setFormUser({
+      name: auth.currentUser?.displayName ?? "",
+    });
+    getAllScores();
+  }, []);
+
+  const handlerSetValues = (key: string, value: string) => {
+    setFormUser({ ...formUser, [key]: value });
+  };
+
+  const handlerUpdateUser = async () => {
+    await updateProfile(userAuth!, {
+      displayName: formUser.name,
+    });
+    setShowModalProfile(false);
+  };
+
+  const handletSignOut= async()=>{
+    await signOut(auth);
+    navigation.dispatch(CommonActions.reset({index:0, routes:[{name:'Login'}]}))
+
+  }
 
   return (
     <>
-    <View style={styles.rootHome}>
-    <StatusBar style='light'/>
-      <View style={styles.header}>
-      <Avatar.Text size={55} label='MI'/> 
-      <View>
-        <Text variant='bodySmall'>Bienvenido </Text>
-        <Text variant='labelLarge'>{userAuth?.displayName} </Text>
-        </View>
-        <View style={styles.iconEnd}>
-          <IconButton style={styles.iconEnd}
-            icon=""
-            size={30}
-            mode='contained'
-            onPress={()=>setShowModalProfile(true)
-              
-            }
+      <View style={styles.rootHome}>
+        <StatusBar style='light' />
+        <View style={styles.header}>
+          <Avatar.Icon size={34} icon="folder"/>
+          <View >
+            <Text variant='bodySmall'>Bienvenido</Text>
+            <Text variant='labelLarge'>{userAuth?.displayName}</Text>
+          </View>
+          <View style={styles.iconEnd}>
+            <IconButton
+              icon="account-circle"
+              size={30}
+              mode='contained'
+              onPress={() => setShowModalProfile(true)}
             />
+          </View>
+        </View>
+        <View>
+        {/* <FlatList
+            data={scores}
+            //renderItem={({ item }) => <ScoreCardComponent score={item} />}
+            keyExtractor={(item, index) => index.toString()}
+          /> */}
+        </View>
+        <View style={styles.container}>
+          <Text variant='headlineLarge' style={styles.title}>Juego de Memoria</Text>
+
+          <Button mode='contained' onPress={()=>navigation.dispatch(CommonActions.navigate({name:"Game"}))}>Comenzar Juego</Button>
         </View>
       </View>
-    </View>
-    <Portal>
-      <Modal visible={showModalProfile} contentContainerStyle={styles.modalProfile}>
-      <View style={styles.modalProfile}>
-        <Text variant='headlineMedium'>Mi Perfil</Text>
-        <View style={styles.iconEnd}>
-        <IconButton icon='close-circle-outline' 
-        size={20} 
-        onPress={()=>setShowModalProfile(false)} ></IconButton>
-        </View>
-        </View>
-        
-        <Divider />
+      <Portal>
+        <Modal visible={showModalProfile} contentContainerStyle={styles.modalProfile}>
+          <View style={styles.modalProfile}>
+            <Text variant='headlineMedium'>Mi Perfil</Text>
+            <View style={styles.iconEnd}>
+              <IconButton icon='close-circle-outline' size={20} onPress={() => setShowModalProfile(false)} />
+            </View>
+          </View>
+          <Divider />
           <TextInput
             mode='outlined'
             label='Nombre'
-            value={formUser.name} 
-            onChangeText={(value)=>handlerSetValues('name',value)}/>
-            <TextInput
+            value={formUser.name}
+            onChangeText={(value) => handlerSetValues('name', value)}
+          />
+          <TextInput
             mode='outlined'
-            label='Telefono'
-            value={formUser.phone}
-            onChangeText={(value)=>handlerSetValues('phone',value)}/>
-        <TextInput
-            mode='outlined'
-            label='correo' 
-            value= {userAuth?.email!}
-            disabled />
-        <Button mode='contained' onPress={handlerUpdateUser}>Actualizar</Button>
-    </Modal>
-  </Portal>
-  <FAB
-    icon="plus"
-    style={styles.fabMessage}
-    onPress={() => console.log('Pressed')}
-  />
-  </>
-  
-  )
+            label='Correo'
+            value={userAuth?.email!}
+            disabled
+          />
+          <Button mode='contained' onPress={handlerUpdateUser}>Actualizar</Button>
+          <View style={styles.iconSignOut}>
+          <IconButton 
+          icon="logout" 
+          size={30} 
+          onPress={ handletSignOut} />
+          </View>
+        </Modal>
+      </Portal>
+      <FAB
+        icon="plus"
+        style={styles.fabMessage}
+        onPress={()=>navigation.dispatch(CommonActions.navigate({name:"Score"}))}
+      />
+    </>
+  );
 }
-
-
-function signOut(auth: Auth) {
-  throw new Error('Function not implemented.');
-}
-

@@ -27,12 +27,14 @@ export const styles=StyleSheet.create({
     rootHome:{
         flex:1,
         marginVertical:55,
-        marginHorizontal:25
+        marginHorizontal:25,
+        backgroundColor:'#334155'
     },
     header:{
         flexDirection:'row',
         alignItems:'center',
-        gap:15
+        gap:15,
+        
     },
     iconEnd:{
         flex:1,
@@ -55,6 +57,7 @@ export const styles=StyleSheet.create({
     fabMessage:{
         position:'absolute',
         bottom:20,
+        margin: 16,
         right:15
     },
     container:{
@@ -64,9 +67,9 @@ export const styles=StyleSheet.create({
         justifyContent:'center'
     },
     title:{
-        fontSize:32,
+        fontSize:22,
         color:'white',
-        fontWeight:'900'
+        fontWeight:'700'
     },
     cardUp: {
         width:100,
@@ -111,4 +114,13 @@ export const styles=StyleSheet.create({
         marginBottom: 20,
         textAlign: 'center',
       },
+      iconSignOut:{
+        marginTop:25,
+        alignItems:'center'
+    },
+    backaction:{
+        backgroundColor: 'white',
+        
+    }
+
 })

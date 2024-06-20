@@ -1,23 +1,27 @@
 import * as React from "react";
 import { View } from "react-native";
-import { Button, Modal, Portal, Provider, Text } from "react-native-paper";
+import { Appbar, Button, Modal, Portal, Provider, Text } from "react-native-paper";
 import { styles } from "../theme/styles";
 import { StatusBar } from "expo-status-bar";
 import { Card } from "./Card";
-import { auth} from "../configs/firebaseConfig";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { Score } from './HomeScreen';
+import { CommonActions,useNavigation } from "@react-navigation/native";
 
+interface Props{
+  showModalGame:boolean,
+  setShowModalGame:Function;
+}
+
+interface FormUser {
+  name: string;
+
+}
 const easyCards = ["👨‍💻", "🌐", "💻", "🖥️", "📲", "📱"];
 const hardCards=["⌨️","🎮","⚠️","👨‍💻", "🌐", "💻", "🖥️", "📲", "📱"];
 
-/*onst shuffle = (array: string[]) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const randomIndex = Math.floor(Math.random() * (i + 1));
-    [array[i], array[randomIndex]] = [array[randomIndex], array[i]];
-  }
-  return array;
-};*/
-export const Game: React.FC = () => {
+export const Game = () => {
+
+
   //nivel de dificultad
   const [difficulty, setDifficulty] = React.useState<"easy" | "hard">("easy");
   const cards = difficulty === "easy" ? easyCards : hardCards;
@@ -31,8 +35,11 @@ export const Game: React.FC = () => {
   const [timeLeft, setTimeLeft] = React.useState(60);
   //score tiempo
   const [Score, setScore] = React.useState(0);
-  const [isModalVisible, setModalVisible] = React.useState(false);
+  const navigation = useNavigation();
+  const [scoreHistory, setScoreHistory] = React.useState<number[]>([]);
 
+  const [isModalVisible, setModalVisible] = React.useState(false);
+  
   React.useEffect(() => {
     if (selectedCards.length < 2) return;
     //index de la tarjeta seleccionada
@@ -50,6 +57,7 @@ export const Game: React.FC = () => {
   React.useEffect(() => {
     if (matchedCards.length === board.length) {
       setModalVisible(true);
+      //saveScore(Score);
     }
   }, [matchedCards]);
 
@@ -79,28 +87,21 @@ export const Game: React.FC = () => {
     setSelectedCards([]);
     SetBoard(shuffle([...cards, ...cards]));
     setModalVisible(false);
-    setTimeLeft(60);
+    setTimeLeft(40);
   };
   const changeDifficulty = (level: "easy" | "hard") => {
     setDifficulty(level);
     resetGame();
   };
-  /*const saveScore = async () => {
-    const user = auth().currentUser;
-    if (user) {
-      await firestore()
-        .collection('scores')
-        .add({
-          userId: user.uid,
-          score: Score,
-          difficulty: difficulty,
-          timestamp: firestore.FieldValue.serverTimestamp(),
-        });
-    }
-  };*/
+  const saveScore=(score:number)=>{
+
+  }
   return (
     <Provider>
       <View style={styles.container}>
+        <View style={styles.backaction}>
+      <Appbar.BackAction onPress={()=>navigation.dispatch(CommonActions.navigate({name:"Home"}))} />
+      </View>
         <Text style={styles.title}>
           {matchedCards.length === board.length ? "Congratulations 🎉" : "TAC Memory"}
         </Text>
@@ -129,7 +130,8 @@ export const Game: React.FC = () => {
           onDismiss={resetGame} 
           contentContainerStyle={styles.modalContainer}>
             <Text style={styles.modalText}>
-            {matchedCards.length === board.length ? "Congratulations 🎉 " : "Time's up!"}
+            {matchedCards.length === board.length ? "Congratulations 🎉": "Time's up!"}
+            <Text style={styles.title}>Movimientos: {Score}</Text>
             </Text>
             <Button onPress={resetGame}>Reset</Button>
           </Modal>
@@ -149,8 +151,5 @@ function shuffle(array: string[]) {
     [array[i], array[randomIndex]] = [array[randomIndex], array[i]];
   }
   return array;
-}
-function firestore() {
-  throw new Error("Function not implemented.");
 }
 

@@ -7,7 +7,9 @@ import { HomeScreen } from '../screens/HomeScreen';
 import { RegisterScreens } from '../screens/RegisterScreens';
 import { View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
-import { styles } from '../theme/styles';
+import { Game } from '../screens/Game';
+import { ScoreCardComponent } from '../screens/components/ScoreCardComponent';
+
 
 
 const Stack = createStackNavigator();
@@ -16,17 +18,16 @@ const Stack = createStackNavigator();
 interface Routes{
   name:string;
   screen:()=> JSX.Element;
+  headerShow?:boolean;
 }
 
 //arreglo que contiene las rutas cuando el usuario on esta autenticado
-const routesNoAuth:Routes[]=[
+const routes:Routes[]=[
   {name: 'Login',screen: LoginScreen},
-  {name: 'Register',screen:RegisterScreens}
-];
-
-//Arreglo que tiene rutas cuando si esta uth
-const routesAuth:Routes[]=[
-  {name: 'Home',screen:HomeScreen}
+  {name: 'Register',screen:RegisterScreens},
+  {name: 'Home',screen:HomeScreen},
+  {name: 'Game',screen:Game},
+  {name: 'Score',screen:ScoreCardComponent}
 ];
 
 export const StackNavigator=()=> {
@@ -53,19 +54,18 @@ export const StackNavigator=()=> {
   return (
     <>
       {isLoading?(
-        <View style={styles.root}>
-          <ActivityIndicator size={45} />
+        <View>
+          <ActivityIndicator  size={35} />
         </View>
         ) :(
-          <Stack.Navigator>
+          <Stack.Navigator initialRouteName={isAuth? 'Home':'Login'}>
             {
-              !isAuth?
-                routesNoAuth.map((item,index)=>(
-                <Stack.Screen key={index} name={item.name} options={{headerShown:false}} component={item.screen} />
-                ))
-                :
-                routesAuth.map((item,index)=>(
-                <Stack.Screen key={index} name={item.name} options={{headerShown:false}} component={item.screen} />
+                routes.map((item,index)=>(
+                <Stack.Screen 
+                key={index} 
+                name={item.name} 
+                options={{headerShown:item.headerShow ?? false}} 
+                component={item.screen} />
                 ))
             }
           </Stack.Navigator>

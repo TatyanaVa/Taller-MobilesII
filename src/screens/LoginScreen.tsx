@@ -58,30 +58,12 @@ export const LoginScreen = () => {
         formLogin.email,
         formLogin.password
       );
-      navigation.dispatch(CommonActions.navigate({ name: "HomeScreen" }));
+      navigation.dispatch(CommonActions.navigate({ name: "Home" }));
     } catch (ex) {
       console.log(ex);
       setShowMessage({
         visible: true,
         message: "Usuario y/o contraseña incorrecta!",
-        color: "#8f0e1a",
-      });
-    }
-  };
-  const handlerSignOut = async () => {
-    try {
-      await signOut(auth);
-      setShowMessage({
-        visible: true,
-        message: "Sesión cerrada correctamente!",
-        color: "#4CAF50",
-      });
-      navigation.dispatch(CommonActions.navigate({ name: "LoginScreen" }));
-    } catch (ex) {
-      console.log(ex);
-      setShowMessage({
-        visible: true,
-        message: "Error al cerrar sesión!",
         color: "#8f0e1a",
       });
     }
@@ -102,8 +84,7 @@ export const LoginScreen = () => {
         label="Contraseña"
         placeholder="Escribe tu contraseña"
         secureTextEntry={hiddenPassword}
-        right={
-          <TextInput.Icon
+        right={<TextInput.Icon
             icon="eye"
             onPress={() => setHiddenPassword(!hiddenPassword)}
           />
@@ -114,13 +95,10 @@ export const LoginScreen = () => {
       <Button style={styles.button} mode="contained" onPress={handlerFormLogin}>
         Iniciar
       </Button>
-      <Button style={styles.button} mode="outlined" onPress={handlerSignOut} >
-        Cerrar Sesión
-      </Button>
       <Text
         style={styles.textRedirect}
         onPress={() =>
-          navigation.dispatch(CommonActions.navigate({ name: "LoginScreen" }))
+          navigation.dispatch(CommonActions.navigate({ name: "Register" }))
         }
       >
         No tienes una cuenta? Regístrate ahora!
@@ -135,6 +113,3 @@ export const LoginScreen = () => {
     </View>
   );
 };
-function signOut(auth: Auth) {
-  throw new Error("Function not implemented.");
-}
