@@ -4,8 +4,10 @@ import { Appbar, Button, Modal, Portal, Provider, Text } from "react-native-pape
 import { styles } from "../theme/styles";
 import { StatusBar } from "expo-status-bar";
 import { Card } from "./Card";
-import { Score } from './HomeScreen';
 import { CommonActions,useNavigation } from "@react-navigation/native";
+import { useState } from "react";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, } from "../configs/firebaseConfig";
 
 interface Props{
   showModalGame:boolean,
@@ -14,6 +16,7 @@ interface Props{
 
 interface FormUser {
   name: string;
+  score:number;
 
 }
 const easyCards = ["👨‍💻", "🌐", "💻", "🖥️", "📲", "📱"];
@@ -34,9 +37,9 @@ export const Game = () => {
   //tiempo 60 seconds
   const [timeLeft, setTimeLeft] = React.useState(60);
   //score tiempo
-  const [Score, setScore] = React.useState(0);
+  const [Score, setScore] =useState(0);
+
   const navigation = useNavigation();
-  const [scoreHistory, setScoreHistory] = React.useState<number[]>([]);
 
   const [isModalVisible, setModalVisible] = React.useState(false);
   
@@ -71,6 +74,13 @@ export const Game = () => {
     }
   }, [timeLeft]);
 
+  React.useEffect(() => {
+    if (timeLeft === 0) {
+      setModalVisible(true);
+
+    }
+  }, [timeLeft]);
+
   const handleTapCard = (index: number) => {
     //selectedCard es el arreglo que tengo mis tarjetas -
     if (selectedCards.length >= 2 || selectedCards.includes(index!)) return;
@@ -93,9 +103,22 @@ export const Game = () => {
     setDifficulty(level);
     resetGame();
   };
-  const saveScore=(score:number)=>{
+  
+  /*const saveScoreToFirestore = async (score: number) => {
+    const user=auth.currentUser;
+    if (user) {
+      try {
+        await setDoc(doc(db, 'scores', user.uid), {
+          score: score,
+          timestamp: new Date(),
+        });
+        console.log('Score saved successfully');
+      } catch (error) {
+        console.error('Error saving score: ', error);
+      }
+    }
+  };*/
 
-  }
   return (
     <Provider>
       <View style={styles.container}>

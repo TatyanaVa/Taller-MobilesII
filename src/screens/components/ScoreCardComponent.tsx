@@ -1,20 +1,39 @@
-import React from 'react';
-import { Appbar, IconButton, Text } from 'react-native-paper';
-import { Score } from '../HomeScreen';
-import { CommonActions, useNavigation } from '@react-navigation/native';
-import { View } from 'react-native';
-import { styles } from '../../theme/styles';
+import React, { useState } from "react";
+import { Appbar, Button, IconButton, Modal, Portal, Text } from "react-native-paper";
+import { CommonActions, RouteProp, useNavigation } from "@react-navigation/native";
+import { FlatList, View } from "react-native";
+import { styles } from "../../theme/styles";
 
 interface Props{
-    score:Score;
+    showModalScore:boolean;
+    setShowModalScore:Function;
 }
 
-export const ScoreCardComponent = () => {
+
+interface formScore{
+    score:number,
+}
+export const ScoreCardComponent = ({showModalScore, setShowModalScore}:Props) => {
+    const [formScore, setFormScore]=useState<formScore>({
+        score:0
+    });
+
+
     const navigation=useNavigation();
     return (
-        <View style={styles.rootHome}>
-            <Appbar.BackAction onPress={()=>navigation.dispatch(CommonActions.navigate({name:"Home"}))} />
-        <Text style={styles.modalText}>Scores: </Text>
-        </View>
+        <Portal>
+            <Modal visible={showModalScore} contentContainerStyle={styles.modalProfile}>
+                <View style={styles.header} >
+                <Text variant="headlineMedium">Puntajes: </Text>
+                <IconButton
+                icon='close-circle-outline'
+                size={30}
+                onPress={()=>setShowModalScore(false)}
+                />
+                </View>
+            </Modal>
+            
+        </Portal>
         )
     }
+

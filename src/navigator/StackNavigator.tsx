@@ -27,7 +27,6 @@ const routes:Routes[]=[
   {name: 'Register',screen:RegisterScreens},
   {name: 'Home',screen:HomeScreen},
   {name: 'Game',screen:Game},
-  {name: 'Score',screen:ScoreCardComponent}
 ];
 
 export const StackNavigator=()=> {
